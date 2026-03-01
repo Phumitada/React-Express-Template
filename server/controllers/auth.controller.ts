@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { authService } from '../services/auth.service'
+import { AuthRequest } from '../middleware/auth.middleware'
 
 const REFRESH_TOKEN_COOKIE = 'refreshToken'
 
@@ -22,6 +23,7 @@ export const authController = {
         data: { user, accessToken },
       })
     } catch (error: any) {
+      console.log(error)
       res.status(400).json({ success: false, message: error.message })
     }
   },
@@ -80,10 +82,11 @@ export const authController = {
   },
 
   me: async (req: Request, res: Response) => {
-    try {
-      res.status(200).json({ success: true, data: (req as any).user })
-    } catch (error: any) {
-      res.status(500).json({ success: false, message: error.message })
+    const user = (req as AuthRequest).user
+    if (!user) {
+      res.status(200).json({ success: true, data: null })
+      return
     }
-  },
+    res.status(200).json({ success: true, data: user })
+  }
 }

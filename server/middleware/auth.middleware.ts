@@ -23,7 +23,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     req.user = payload
     next()
   } catch (error) {
-    res.status(401).json({ success: false, message: 'Invalid or expired token' })
+    next()
   }
 }
 
